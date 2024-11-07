@@ -1,0 +1,121 @@
+post http://localhost:5100/register
+Content-Type: application/json
+
+{
+    "username": "user",
+    "email": "surveyors@gmail.com",
+    "password": "user",
+    "role":"surveyor"
+
+}
+
+###
+post http://localhost:5100/login
+Content-Type: application/json
+
+
+{
+    "username": "user",
+    "password": "user"
+}
+
+//login admin
+###
+post http://localhost:5100/login
+Content-Type: application/json
+
+
+{
+    "username": "test",
+    "password": "test"
+}
+
+###
+get http://localhost:5100/me
+
+###
+delete http://localhost:5100/logout
+
+
+###
+put http://localhost:5100/updatequestionnaires/6
+Content-Type: application/json
+
+{
+    "nomorUrut": 1,
+    "nomorRumahPadaPeta": "123",
+    "namaLengkapKK": "John Doe",
+    "usia": 35,
+    "jenisKelamin": "Laki-laki",
+    "nomorKK": "1234567890",
+    "nomorKTP": "0987654321",
+    "asalKTP": "Jakarta",
+    "jumlahKK": 1,
+    "jumlahPenghuni": 4,
+    "alamatRumah": "Jl. Kebon Jeruk No. 10",
+    "kecamatan": "Kebon Jeruk",
+    "desaKelurahan": "Kebon Jeruk",
+    "pendidikanTerakhir": "Sarjana",
+    "pekerjaan": "Karyawan Swasta",
+    "fungsiBangunan": "Tempat Tinggal",
+    "penghasilan": 10000000,
+    "statusKepemilikanRumah": "Milik Sendiri",
+    "asetRumahDiTempatLain": 0,
+    "statusKepemilikanTanah": "Milik Sendiri",
+    "asetTanahDiTempatLain": 0,
+    "sumberPenerangan": "Listrik",
+    "dayaListrik": 1300,
+    "bantuanPerumahan": "Tidak",
+    "modelRumah": "Minimalis",
+    "pondasi": "Beton",
+    "kolom": "Beton",
+    "rangkaAtap": "Besi",
+    "plafon": "Gypsum",
+    "balok": "Beton",
+    "sloof": "Beton",
+    "pintuJendelaKonsen": "Kayu",
+    "ventilasi": "Ada",
+    "materialLantaiTerluas": "Keramik",
+    "kondisiLantai": "Baik",
+    "materialDindingTerluas": "Batu Bata",
+    "kondisiDinding": "Baik",
+    "materialPenutupAtapTerluas": "Genteng",
+    "kondisiPenutupAtap": "Baik",
+    "luasRumah": 100,
+    "luasTanah": 120,
+    "buanganAirLimbahRumahTangga": "Sistem Pipa",
+    "saranaPengelolaanLimbahCair": "Kanal",
+    "pemiliharaanSaranaPengelolaanLimbah": "Rutin",
+    "jenisTempatPembuanganAirTinja": "Septik Tank",
+    "kepemilikanKamarMandiDanJamban": "Milik Sendiri",
+    "jumlahJamban": 2,
+    "jenisKloset": "Kloset Duduk",
+    "jenisTangkiSeptik": "Beton",
+    "materialTangkiSeptik": "Beton",
+    "alasTangkiSeptik": "Tanah",
+    "lubangPenyedotan": "Ada",
+    "posisiTangkiSeptik": "Belakang Rumah",
+    "jarakTangkiSeptikDenganSumberAir": 10,
+    "sumberAirMinum": "PDAM",
+   "titikKoordinatRumah": "-",
+    "manualTitikKoordinatRumah": "-7.115142, 109.951829"
+   
+}
+
+###
+get http://localhost:5100/getquestionnaires/1
+
+###
+get http://localhost:5100/getquestionnaires
+
+###
+get http://localhost:5100/filter
+
+###
+get http://localhost:5100/maps/1
+
+###
+delete http://localhost:5100/delete/5
+
+###
+get http://localhost:5100/user
