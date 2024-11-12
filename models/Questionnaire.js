@@ -24,7 +24,11 @@ const Questionnaire = db.define("Questionnaire", {
   },
   usia: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
+  },
+  tanggallahir: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
   },
   jenisKelamin: {
     type: DataTypes.STRING,
@@ -43,7 +47,7 @@ const Questionnaire = db.define("Questionnaire", {
     allowNull: false,
   },
   jumlahKK: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   jumlahPenghuni: {
@@ -256,18 +260,20 @@ adminId: {
 },
   score: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    // allowNull: false,
+    allowNull: true,
   },
   kategori: {
     type: DataTypes.STRING,
-    allowNull: false,
+    // allowNull: false,
+    allowNull: true,
   },
 }, {
   tableName: "questionnaire",
   timestamps: false,
 });
 
-Questionnaire.belongsTo(Admin, { foreignKey: 'adminId', as: 'surveyor' });
-Admin.hasMany(Questionnaire, { foreignKey: 'adminId' });
+Questionnaire.belongsTo(Admin, { foreignKey: 'adminId' });
+// Admin.hasMany(Questionnaire, { foreignKey: 'adminId' });
 
 module.exports = Questionnaire;

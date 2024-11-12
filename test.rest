@@ -10,16 +10,27 @@ Content-Type: application/json
 }
 
 ###
-post http://localhost:5100/login
+put http://localhost:5100/reset
 Content-Type: application/json
 
 
 {
+    "email":"surveyors@gmail.com",
     "username": "user",
-    "password": "user"
+    "newPassword": "123"
 }
 
 //login admin
+###
+post https://apideployprojectrumah.brabsen.my.id/login
+Content-Type: application/json
+
+
+{
+    "username": "test",
+    "password": "test"
+}
+
 ###
 post http://localhost:5100/login
 Content-Type: application/json
@@ -30,22 +41,25 @@ Content-Type: application/json
     "password": "test"
 }
 
+
 ###
 get http://localhost:5100/me
 
 ###
 delete http://localhost:5100/logout
 
-
 ###
-put http://localhost:5100/updatequestionnaires/6
+get http://localhost:5100/getquestionnaires/1
+###
+post http://localhost:5100/createquestionnaires
 Content-Type: application/json
 
 {
+    "statusrumah":"Berpenghuni",
     "nomorUrut": 1,
     "nomorRumahPadaPeta": "123",
     "namaLengkapKK": "John Doe",
-    "usia": 35,
+    "tanggallahir": "2003-08-17",
     "jenisKelamin": "Laki-laki",
     "nomorKK": "1234567890",
     "nomorKTP": "0987654321",
@@ -109,13 +123,28 @@ get http://localhost:5100/getquestionnaires/1
 get http://localhost:5100/getquestionnaires
 
 ###
+get http://localhost:5100/statusrumah2
+
+###
+get http://localhost:5100/backlog
+
+###
+get http://localhost:5100/statusrumah
+
+###
 get http://localhost:5100/filter
 
 ###
 get http://localhost:5100/maps/1
 
 ###
-delete http://localhost:5100/delete/5
+delete http://localhost:5100/delete/16
 
 ###
-get http://localhost:5100/user
+get http://localhost:5100/all
+
+###
+get http://localhost:5100/backlog
+
+###
+get https://cea6-114-10-44-189.ngrok-free.app/me

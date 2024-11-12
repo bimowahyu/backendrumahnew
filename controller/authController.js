@@ -19,8 +19,10 @@ const logIn = async (req, res) => {
         }
 
         req.session.adminId = admin.id;
-        console.log("log:", req.session.adminId);
+      
         req.session.adminRole = admin.role;
+        console.log("log:", req.session.adminId);
+        console.log("log:", req.session.adminRole);
 
         await req.session.save();
 
@@ -39,7 +41,9 @@ const logIn = async (req, res) => {
 
 
 const Me = async (req, res) => {
-    if (!req.session.adminId) { 
+    console.log("Session adminId:", req.session.adminId);
+    if (!req.session.adminId)
+         { 
         return res.status(401).json({ msg: "Mohon login ke akun Anda!" });
     }
     try {
@@ -47,7 +51,11 @@ const Me = async (req, res) => {
             attributes: ['id', 'username', 'email', 'role'],
             where: { id: req.session.adminId } 
         });
-        if (!admin) return res.status(404).json({ msg: "User tidak ditemukan" });
+
+        if (!admin){
+            req.session.destroy();
+         return res.status(404).json({ msg: "User tidak ditemukan" });
+        }
         res.status(200).json(admin);
     } catch (error) {
         console.error(error);
@@ -112,4 +120,26 @@ const register = async (req, res) => {
     }
   }
   
-module.exports = { logIn, Me, logOut ,register,getuser};
+  const resetPassword = async (req, res) => {
+    const { email, username, newPassword } = req.body;
+    if (!email || !username || !newPassword) {
+        return res.status(400).json({ msg: "Silakan masukkan email, username, dan password baru" });
+    }
+  
+    try {
+        const user = await Admin.findOne({
+            where: { email, username }
+        });
+        
+        if (!user) {
+            return res.status(404).json({ msg: "User tidak ditemukan" });
+        }
+        const hashedPassword = await argon2.hash(newPassword);
+        await user.update({ password: hashedPassword });
+        res.status(200).json({ msg: "Password berhasil direset" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+module.exports = { logIn, Me, logOut ,register,getuser, resetPassword};

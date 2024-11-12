@@ -5,7 +5,7 @@ const Questionnaire = require("../models/Questionnaire");
 const getAllMaps = async (req,res) =>{
     try {
         const response = await Questionnaire.findAll({
-            attributes: ['id', 'namaLengkapKK', 'titikKoordinatRumah','manualTitikKoordinatRumah','alamatRumah','kecamatan'],
+            attributes: ['id', 'namaLengkapKK', 'titikKoordinatRumah','manualTitikKoordinatRumah','alamatRumah','kecamatan','desaKelurahan'],
         }) 
         return res.status(200).json(response)
     } catch (error) {
@@ -18,7 +18,7 @@ const getMapById = async (req,res) =>{
         const { id } = req.params;
         const response = await Questionnaire.findOne({
             where:{id}
-            ,attributes: ['id', 'namaLengkapKK', 'titikKoordinatRumah','manualTitikKoordinatRumah','alamatRumah','kecamatan']
+            ,attributes: ['id', 'namaLengkapKK', 'titikKoordinatRumah','manualTitikKoordinatRumah','alamatRumah','kecamatan','desaKelurahan']
         })
         return res.status(200).json(response)
     } catch (error) {

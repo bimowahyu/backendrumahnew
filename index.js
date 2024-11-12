@@ -7,6 +7,7 @@ const dataRoutes = require('./routes/dataRoutes')
 const mapsRoutes = require('./routes/mapsRoutes')
 const fotoRoutes = require('./routes/fotoRoutes')
 const uploadRoutes = require('./routes/uploadRoutes')
+const pdfRoutes = require('./routes/pdfRoutes')
 const db = require('./config/Database')
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
@@ -28,7 +29,6 @@ const store = new SequelizeStoreSession({
 //    await db.sync();
 // })();
 
-
 app.use(express.json())
 app.use((req, res, next) => {
     res.setHeader('Date', moment().tz(TIMEZONE).format('ddd, DD MMM YYYY HH:mm:ss [GMT+0700]'));
@@ -38,18 +38,46 @@ app.use(session({
     secret: SESS_SECRET,
     resave: false,
     saveUninitialized: true,
-    rolling: true,  
     store: store,
     cookie: {
-        maxAge: 3600000, // 1 jam
         secure: 'auto'
     }
 }));
+// app.use(session({
+//     secret: SESS_SECRET,
+//     resave: false,
+//     saveUninitialized: true,
+//     store: store,
+//     cookie: {
+//         secure: false, // Set ke false saat testing dengan ngrok (pastikan true saat di deploy ke https).
+//         httpOnly: true,
+//         sameSite: 'lax' // Set ke 'lax' untuk percobaan (atau 'none' jika Anda butuh akses lintas situs)
+//     }
+// }));
+
+app.use((req, res, next) => {
+    req.session._garbage = Date();
+    req.session.touch();
+    next();
+});
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+
 
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000'
 }));
+// app.use(cors({
+//     origin: 'https://homejsx.vercel.app', 
+//     credentials: true, 
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     optionsSuccessStatus: 200
+// }));
+
 
 // app.use(fileUpload());
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -60,6 +88,7 @@ app.use(mapsRoutes);
 app.use(questionnaireRoutes)
 app.use(fotoRoutes)
 app.use(uploadRoutes)
+app.use(pdfRoutes)
 app.use('/images', express.static(path.join(__dirname, 'uploads', 'images')));
 // store.sync();
 
