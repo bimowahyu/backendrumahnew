@@ -23,6 +23,7 @@ const logIn = async (req, res) => {
         req.session.adminRole = admin.role;
         console.log("log:", req.session.adminId);
         console.log("log:", req.session.adminRole);
+        console.log(req.session)
 
         await req.session.save();
 
@@ -32,6 +33,7 @@ const logIn = async (req, res) => {
             email: admin.email,
             role: admin.role
         };
+        
         res.status(200).json(responseData);
     } catch (error) {
         console.error(error);
@@ -111,7 +113,8 @@ const register = async (req, res) => {
   const getuser = async (req,res) =>{
     try {
         const response = await Admin.findAll({
-            attributes: ['id', 'username', 'email', 'role'],
+            attributes: ['id', 'username'],
+            logging: console.log
         })
         return res.status(200).json(response)
     } catch (error) {

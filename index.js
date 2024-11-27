@@ -90,6 +90,7 @@ app.use(fotoRoutes)
 app.use(uploadRoutes)
 app.use(pdfRoutes)
 app.use('/images', express.static(path.join(__dirname, 'uploads', 'images')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // store.sync();
 
 app.get('/', (req, res) => {

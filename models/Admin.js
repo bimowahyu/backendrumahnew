@@ -4,6 +4,7 @@ const db = require('../config/Database')
 const {DataTypes} = Sequelize
 
 const Admin = db.define("Admin", {
+    
     username: {
         type: DataTypes.STRING,
         allowNull: false,

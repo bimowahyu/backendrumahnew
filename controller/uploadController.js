@@ -4,7 +4,7 @@ const path = require('path');
 const xlsx = require('xlsx');
 
 function calculateScore(data) {
-  let score = 3; // Start with an initial score
+  let score = 3; 
   console.log("Initial Score (Model Rumah):", score);
 
   if (["PLN Tanpa Meteran", "Listrik Non PLN", "Bukan Listrik"].includes(data.sumberPenerangan)) {
@@ -257,8 +257,8 @@ const uploadExcel = async (req, res) => {
         manualTitikKoordinatRumah: data.manualTitikKoordinatRumah,
         tanggalPendataan: data.tanggalPendataan,
         adminId: data.adminId,
-        score: score,  // Menyimpan score yang dihitung
-        kategori: kategori,  // Menyimpan kategori yang dihitung
+        score: score,  
+        kategori: kategori, 
       });
     }
 

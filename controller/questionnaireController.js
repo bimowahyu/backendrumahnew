@@ -7,7 +7,7 @@ const { validationResult } = require('express-validator');
 const moment = require('moment'); 
 
 function calculateScore(data) {
-  let score = 3; // Start with an initial score
+  let score = 3; 
   console.log("Initial Score (Model Rumah):", score);
 
   if (["PLN Tanpa Meteran", "Listrik Non PLN", "Bukan Listrik"].includes(data.sumberPenerangan)) {
@@ -290,31 +290,37 @@ const getQuestionnaireById = async (req, res) => {
 // };
 const updateQuestionnaire = async (req, res) => {
   const { id } = req.params;
-  
+
   console.log("Session adminRole:", req.session.adminRole);
   console.log("Session adminId:", req.session.adminId);
-  
+
   try {
     const questionnaire = await Questionnaire.findOne({ where: { id } });
     if (!questionnaire) {
       return res.status(404).json({ message: "Data tidak ditemukan" });
     }
+
     if (req.session.adminRole !== 'admin' && questionnaire.adminId !== req.session.adminId) {
       return res.status(403).json({ message: "Anda tidak memiliki izin untuk mengedit data ini" });
     }
-    if (req.body.tanggallahir) {
-      const birthDate = new Date(req.body.tanggallahir);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
 
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
+    if (req.body.tanggallahir) {
+      // Format tanggallahir menggunakan Moment.js
+      const formattedDate = moment(req.body.tanggallahir, 'DD/MM/YYYY').format('YYYY-MM-DD');
+      req.body.tanggallahir = formattedDate;
+
+      // Hitung usia berdasarkan tanggallahir
+      const birthDate = moment(req.body.tanggallahir, 'YYYY-MM-DD');
+      const today = moment();
+      const age = today.diff(birthDate, 'years');
       req.body.usia = age;
     }
+
+    // Hitung skor dan kategori (asumsikan fungsi calculateScore tersedia)
     const { score, kategori } = calculateScore(req.body);
     delete req.body.namaSurveyor;
+
+    // Update data ke database
     const [updated] = await Questionnaire.update(
       { ...req.body, score, kategori },
       { where: { id } }
@@ -323,13 +329,12 @@ const updateQuestionnaire = async (req, res) => {
     if (!updated) {
       return res.status(404).json({ message: "Data tidak ditemukan" });
     }
+
     const updatedQuestionnaire = await Questionnaire.findOne({ where: { id } });
-    // res.status(200).json({ message: "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ", questionnaire: updatedQuestionnaire });
     res.status(200).json({ message: "Data berhasil diperbarui", questionnaire: updatedQuestionnaire });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
-    // res.status(500).json('اَسْتَغْفِرُ اللهَ الْعَظِيْمَ')
   }
 };
 
@@ -444,7 +449,6 @@ const downloadExcel = async (req, res) => {
       nomorUrut: q.nomorUrut,
       nomorRumahPeta: q.nomorRumahPadaPeta,
       namaLengkapKK: q.namaLengkapKK,
-      // Format tanggallahir menjadi dd/mm/yyyy menggunakan moment
       tanggallahir: q.tanggallahir ? moment(q.tanggallahir).format('DD/MM/YYYY') : '',
       usia: q.usia,
       jenisKelamin: q.jenisKelamin,
