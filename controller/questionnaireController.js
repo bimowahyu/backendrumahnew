@@ -188,20 +188,7 @@ const getQuestionnaires = async (req, res) => {
   }
 };
 
-// const getQuestionnaireById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const questionnaire = await Questionnaire.findOne({
-//       where: { id },
-//       include: { model: Admin, as: 'surveyor', attributes: ['username'] }
-//     });
-//     if (!questionnaire) return res.status(404).json({ message: "Data tidak ditemukan" });
 
-//     res.status(200).json(questionnaire);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 //normal
 // const getQuestionnaireById = async (req, res) => {
@@ -220,22 +207,6 @@ const getQuestionnaires = async (req, res) => {
 //   }
 // };
 
-
-// const updateQuestionnaire = async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//     const { score, kategori } = calculateScore(req.body);
-//     const [updated] = await Questionnaire.update({ ...req.body, score, kategori }, { where: { id } });
-
-//     if (!updated) return res.status(404).json({ message: "Data tidak ditemukan" });
-
-//     const updatedQuestionnaire = await Questionnaire.findOne({ where: { id } });
-//     res.status(200).json({ message: "Data berhasil diperbarui", questionnaire: updatedQuestionnaire });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 const getQuestionnaireById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -255,7 +226,10 @@ const getQuestionnaireById = async (req, res) => {
     });
 
     if (!questionnaire) return res.status(404).json({ message: "Data tidak ditemukan" });
-
+    // if (questionnaire.tanggallahir) {
+    //   const formattedDate = moment(questionnaire.tanggallahir, 'YYYY-MM-DD').format('DD/MM/YYYY');
+    //   questionnaire.tanggallahir = formattedDate;
+    // }
     res.status(200).json(questionnaire);
   } catch (error) {
     console.error("Error:", error.message);
@@ -303,16 +277,20 @@ const updateQuestionnaire = async (req, res) => {
     if (req.session.adminRole !== 'admin' && questionnaire.adminId !== req.session.adminId) {
       return res.status(403).json({ message: "Anda tidak memiliki izin untuk mengedit data ini" });
     }
-
     if (req.body.tanggallahir) {
-      // Format tanggallahir menggunakan Moment.js
-      const formattedDate = moment(req.body.tanggallahir, 'DD/MM/YYYY').format('YYYY-MM-DD');
-      req.body.tanggallahir = formattedDate;
-
-      // Hitung usia berdasarkan tanggallahir
-      const birthDate = moment(req.body.tanggallahir, 'YYYY-MM-DD');
+      const inputDate = req.body.tanggallahir;
+    
+      // Validasi format input (YYYY-MM-DD)
+      const isValidDate = moment(inputDate, "YYYY-MM-DD", true).isValid();
+      if (!isValidDate) {
+        return res.status(400).json({ message: "Format tanggal lahir tidak valid. Gunakan format YYYY-MM-DD." });
+      }
+    
+      // Hitung usia (langsung dari input tanpa format ulang)
+      const birthDate = moment(inputDate, "YYYY-MM-DD");
       const today = moment();
-      const age = today.diff(birthDate, 'years');
+      const age = today.diff(birthDate, "years");
+    
       req.body.usia = age;
     }
 
@@ -331,6 +309,10 @@ const updateQuestionnaire = async (req, res) => {
     }
 
     const updatedQuestionnaire = await Questionnaire.findOne({ where: { id } });
+    // if (updatedQuestionnaire.tanggallahir) {
+    //   const formattedDate = moment(updatedQuestionnaire.tanggallahir, 'YYYY-MM-DD').format('DD/MM/YYYY');
+    //   updatedQuestionnaire.tanggallahir = formattedDate;
+    // }
     res.status(200).json({ message: "Data berhasil diperbarui", questionnaire: updatedQuestionnaire });
   } catch (error) {
     console.error(error);
@@ -338,85 +320,7 @@ const updateQuestionnaire = async (req, res) => {
   }
 };
 
-//updatenormal
-// const updateQuestionnaire = async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const { score, kategori } = calculateScore(req.body);
-//     delete req.body.namaSurveyor;
-//     const [updated] = await Questionnaire.update(
-//       { ...req.body, score, kategori },
-//       { where: { id } }
-//     );
-//     if (!updated) return res.status(404).json({ message: "Data tidak ditemukan" });
-//     const updatedQuestionnaire = await Questionnaire.findOne({ where: { id } });
-//     res.status(200).json({ message: "Data berhasil diperbarui", questionnaire: updatedQuestionnaire });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
-//updatelogic usia
-// const updateQuestionnaire = async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//     // Calculate the age based on tanggallahir
-//     if (req.body.tanggallahir) {
-//       const birthDate = new Date(req.body.tanggallahir);
-//       const today = new Date();
-//       let age = today.getFullYear() - birthDate.getFullYear();
-//       const monthDiff = today.getMonth() - birthDate.getMonth();
-
-//       if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-//         age--;
-//       }
-
-//       // Add the calculated age to the request body
-//       req.body.usia = age;
-//     }
-
-//     const { score, kategori } = calculateScore(req.body);
-//     delete req.body.namaSurveyor; // Remove namaSurveyor from the request body before updating
-
-//     // Update data except for namaSurveyor
-//     const [updated] = await Questionnaire.update(
-//       { ...req.body, score, kategori },
-//       { where: { id } }
-//     );
-
-//     if (!updated) return res.status(404).json({ message: "Data tidak ditemukan" });
-
-//     // Fetch the updated questionnaire to return
-//     const updatedQuestionnaire = await Questionnaire.findOne({ where: { id } });
-//     res.status(200).json({ message: "Data berhasil diperbarui", questionnaire: updatedQuestionnaire });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-
-//deletebyuserinputdata
-// const deleteQuestionnaire = async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-    
-//     const questionnaire = await Questionnaire.findOne({ where: { id } });
-//     if (!questionnaire) return res.status(404).json({ message: "Data tidak ditemukan" });
-
-//     if (questionnaire.adminId !== req.session.adminId) {
-//       return res.status(403).json({ message: "Anda tidak memiliki izin untuk menghapus data ini" });
-//     }
-//     await Foto.destroy({ where: { questionnaireId: id } });
-//     const deleted = await Questionnaire.destroy({ where: { id } });
-//     if (!deleted) return res.status(404).json({ message: "Data tidak ditemukan" });
-
-//     res.status(200).json({ message: "Data berhasil dihapus" });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 //deletenormal
 const deleteQuestionnaire = async (req, res) => {

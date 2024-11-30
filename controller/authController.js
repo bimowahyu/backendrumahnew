@@ -123,6 +123,20 @@ const register = async (req, res) => {
     }
   }
   
+  const deleteUser = async (req, res) =>{
+    try {
+        console.log("Request body:", req.params);
+        const { id } = req.params;
+        const response = await Admin.destroy({ where: { id } });
+        if(!response){
+            return res.status(404).json({ msg: "User tidak ditemukan" });
+        }
+        return res.status(200).json({ msg: "User berhasil dihapus" })
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
   const resetPassword = async (req, res) => {
     const { email, username, newPassword } = req.body;
     if (!email || !username || !newPassword) {
@@ -145,4 +159,4 @@ const register = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
-module.exports = { logIn, Me, logOut ,register,getuser, resetPassword};
+module.exports = { logIn, Me, logOut ,register,getuser,deleteUser, resetPassword};

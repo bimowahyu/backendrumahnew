@@ -32,7 +32,8 @@ Content-Type: application/json
 }
 
 ###
-post https://api.sip-akurat.my.id/login
+# post https://api.sidalimahksb.id/login
+post http://localhost:5100/login
 Content-Type: application/json
 
 
@@ -48,7 +49,7 @@ delete http://localhost:5100/logout
 get http://localhost:5100/user
 
 ###
-delete http://localhost:5100/logout
+delete http://localhost:5100/deleteuser/4
 
 ###
 get http://localhost:5100/getquestionnaires/1
